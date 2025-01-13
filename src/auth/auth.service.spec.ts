@@ -1,18 +1,35 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
+import { PrismaService } from '../prisma/prisma.service'; // Adjust the path if necessary
 
 describe('AuthService', () => {
-  let service: AuthService;
+  let authService: AuthService;
+  let prismaService: PrismaService;
 
   beforeEach(async () => {
+    // Mock PrismaService
+    const prismaServiceMock = {
+      user: {
+        create: jest.fn(),
+      },
+    };
+
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthService],
+      providers: [
+        AuthService,
+        {
+          provide: PrismaService,
+          useValue: prismaServiceMock, // Provide the mock PrismaService
+        },
+      ],
     }).compile();
 
-    service = module.get<AuthService>(AuthService);
+    authService = module.get<AuthService>(AuthService);
+    prismaService = module.get<PrismaService>(PrismaService);
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(authService).toBeDefined();
   });
 });
+
