@@ -6,7 +6,6 @@ export class SignupAuthDto {
 
     @IsNotEmpty({message:"lastname is required"})
     lastname:string
-
     @IsNotEmpty({message:"Email is required"})
     @IsEmail({},{message:"Email is Invalid"})
     email: string;

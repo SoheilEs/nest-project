@@ -23,10 +23,10 @@ import {
       const message = exception?.message || 'Internal server error';
   
       // Log the error (optional but useful for debugging)
-      this.logger.error(
-        `${exception?.message || exception?.name} - ${request.url}`,
-        exception?.stack,
-      );
+      // this.logger.error(
+      //   `${exception?.message || exception?.name} - ${request.url}`,
+      //   exception?.stack,
+      // );
   
       // Return only statusCode and message in the error response
       const errorResponse = {

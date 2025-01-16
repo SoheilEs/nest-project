@@ -4,16 +4,16 @@ import { SignupAuthDto } from './dto/signup-auth.dto';
 import * as argon2 from "argon2";
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { SigninAuthDto } from './dto/sigin-auth.dto';
-import { error } from 'console';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+
+
 
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService){
-
-  }
+  constructor(private prisma: PrismaService, private jwt:JwtService,private config:ConfigService){}
  
-  
   async signup(SignupAuthDto: SignupAuthDto) {
     const { firstname, lastname, email, password } = SignupAuthDto;
     const hash = await argon2.hash(password);
@@ -57,14 +57,24 @@ export class AuthService {
       },
 
     })
-    if(!user) throw new HttpException('Email or Password is invalid', HttpStatus.NOT_FOUND)
+    if(!user) throw new HttpException('Email or Password is invalid', HttpStatus.BAD_REQUEST)
     const compareResult = await argon2.verify(user.hash,password)
-    if(!compareResult) throw new HttpException('Email or Password is invalid', HttpStatus.NOT_FOUND)
+    if(!compareResult) throw new HttpException('Email or Password is invalid', HttpStatus.BAD_REQUEST)
     
     delete user.hash
     
-    
-    return user;
+    const accessToken = await this.signToken({
+      id:user.id,
+      email:user.email
+    })
+    return {
+      accessToken 
+  } ;
   }
-
+  async signToken(userInfo:{id:number,email:string}): Promise<string>{
+    return await this.jwt.signAsync(userInfo,{
+      expiresIn: 24 * 60 * 60 * 1000, // 1 DAY
+      secret: this.config.get("JWT_SECRET")
+    })
+  }
 }

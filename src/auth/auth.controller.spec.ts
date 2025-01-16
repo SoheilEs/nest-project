@@ -3,7 +3,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { PrismaService } from '../prisma/prisma.service'; // Adjust path if needed
 import * as argon2 from 'argon2';
-import { SigninAuthDto } from './dto/signup-auth.dto';
+import { SignupAuthDto } from './dto/signup-auth.dto';
 
 describe('AuthController', () => {
   let authController: AuthController;
@@ -44,7 +44,7 @@ describe('AuthController', () => {
 
   describe('signin', () => {
     it('should return a user object with hashed password', async () => {
-      const signinDto: SigninAuthDto = {
+      const signinDto: SignupAuthDto = {
         firstname: 'John',
         lastname: 'Doe',
         email: 'john.doe@example.com',
